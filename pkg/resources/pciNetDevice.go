@@ -1,6 +1,7 @@
 package resources
 
 import (
+	"github.com/golang/glog"
 	"github.com/intel/sriov-network-device-plugin/pkg/types"
 	"github.com/intel/sriov-network-device-plugin/pkg/utils"
 	"github.com/jaypipes/ghw"
@@ -44,6 +45,8 @@ func NewPciNetDevice(pciDevice *ghw.PCIDevice, rFactory types.ResourceFactory) (
 		ifName = netDevs[0]
 	}
 	pfName, err := utils.GetPfName(pciAddr)
+	glog.Infof("PFName for %s %s", pciAddr, pfName)
+
 	if err != nil {
 		return nil, err
 	}

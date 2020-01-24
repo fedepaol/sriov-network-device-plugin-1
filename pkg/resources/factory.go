@@ -83,37 +83,53 @@ func (rf *resourceFactory) GetSelector(attr string, values []string) (types.Devi
 // GetResourcePool returns an instance of resourcePool
 func (rf *resourceFactory) GetResourcePool(rc *types.ResourceConfig, deviceList []types.PciNetDevice) (types.ResourcePool, error) {
 	filteredDevice := deviceList
+	glog.Infof("Selectors %v", rc.Selectors)
 
 	// filter by vendor list
 	if rc.Selectors.Vendors != nil && len(rc.Selectors.Vendors) > 0 {
 		if selector, err := rf.GetSelector("vendors", rc.Selectors.Vendors); err == nil {
+			glog.Infof("Filtering for vendors %v", filteredDevice)
 			filteredDevice = selector.Filter(filteredDevice)
+			glog.Infof("Filtered for vendors %v", filteredDevice)
 		}
 	}
 
 	// filter by device list
 	if rc.Selectors.Devices != nil && len(rc.Selectors.Devices) > 0 {
 		if selector, err := rf.GetSelector("devices", rc.Selectors.Devices); err == nil {
+			glog.Infof("Filtering for devices %v", filteredDevice)
+
 			filteredDevice = selector.Filter(filteredDevice)
+			glog.Infof("Filtered for devices %v", filteredDevice)
 		}
 	}
 
 	// filter by driver list
 	if rc.Selectors.Drivers != nil && len(rc.Selectors.Drivers) > 0 {
 		if selector, err := rf.GetSelector("drivers", rc.Selectors.Drivers); err == nil {
+			glog.Infof("Filtering for drivers %v", filteredDevice)
+
 			filteredDevice = selector.Filter(filteredDevice)
+			glog.Infof("Filtering for drivers %v", filteredDevice)
+
 		}
 	}
 
 	// filter by PfNames list
 	if rc.Selectors.PfNames != nil && len(rc.Selectors.PfNames) > 0 {
 		if selector, err := rf.GetSelector("pfNames", rc.Selectors.PfNames); err == nil {
+			glog.Infof("Filtering for pfNames %v", filteredDevice)
+
 			filteredDevice = selector.Filter(filteredDevice)
+			glog.Infof("Filtering for pfNames %v", filteredDevice)
+
 		}
 	}
 
 	// filter for rdma devices
 	if rc.IsRdma {
+		glog.Infof("Filtering for isdma %v", filteredDevice)
+
 		rdmaDevices := make([]types.PciNetDevice, 0)
 		for _, dev := range filteredDevice {
 			if dev.GetRdmaSpec().IsRdma() {
@@ -121,7 +137,10 @@ func (rf *resourceFactory) GetResourcePool(rc *types.ResourceConfig, deviceList 
 			}
 		}
 		filteredDevice = rdmaDevices
+		glog.Infof("Filtered for isdma %v", filteredDevice)
+
 	}
+	glog.Infof("FINAL %v", filteredDevice)
 
 	devicePool := make(map[string]types.PciNetDevice, 0)
 	apiDevices := make(map[string]*pluginapi.Device)

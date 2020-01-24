@@ -1,6 +1,7 @@
 package resources
 
 import (
+	"github.com/golang/glog"
 	"github.com/intel/sriov-network-device-plugin/pkg/types"
 )
 
@@ -76,6 +77,8 @@ type pfNameSelector struct {
 func (s *pfNameSelector) Filter(inDevices []types.PciNetDevice) []types.PciNetDevice {
 	filteredList := make([]types.PciNetDevice, 0)
 	for _, dev := range inDevices {
+		glog.Infof("filtering for pf %v %s", dev, dev.GetPFName())
+
 		if contains(s.pfNames, dev.GetPFName()) {
 			filteredList = append(filteredList, dev)
 		}
